@@ -1,0 +1,264 @@
+psql (10.14)
+ADVERTENCIA: El código de página de la consola (437) difiere del código
+            Los caracteres de 8 bits pueden funcionar incorrectamente.
+            Vea la página de referencia de psql «Notes for Windows users»
+Digite «help» para obtener ayuda.
+
+postgres=# \q
+PS C:\Users\Cesar>
+PS C:\Users\Cesar> psql -U postgres
+Contraseña para usuario postgres:
+psql (10.14)
+ADVERTENCIA: El código de página de la consola (437) difiere del código
+            de página de Windows (1252).
+            Los caracteres de 8 bits pueden funcionar incorrectamente.
+            Vea la página de referencia de psql «Notes for Windows users»
+            para obtener más detalles.
+Digite «help» para obtener ayuda.
+
+postgres=# SELECT * FROM \c Test;
+Ahora está conectado a la base de datos «Test» con el usuario «postgres».
+Test-# CREATE TABLE users (name text, age smallint, birthday date)
+Test-# CREATE TABLE users (name text, age smallint, birthday date)
+Test-#
+Test-# CREATE TABLE users (name text, age smallint, birthday date)
+Test-# \q
+PS C:\Users\Cesar> psql "test"
+Contraseña:
+psql: FATAL:  la autentificación password falló para el usuario «Cesar»
+PS C:\Users\Cesar> psql "postgres"
+Contraseña:
+psql: FATAL:  la autentificación password falló para el usuario «Cesar»
+PS C:\Users\Cesar> psql -U postgres
+Contraseña para usuario postgres:
+psql (10.14)
+ADVERTENCIA: El código de página de la consola (437) difiere del código
+            de página de Windows (1252).
+            Los caracteres de 8 bits pueden funcionar incorrectamente.
+            Vea la página de referencia de psql «Notes for Windows users»
+            para obtener más detalles.
+Digite «help» para obtener ayuda.
+
+postgres=# CREATE TABLE users (name text, age smallint, birthday date)
+postgres-# ;
+CREATE TABLE
+postgres=# \d
+        Listado de relaciones
+ Esquema | Nombre | Tipo  |  Due±o
+---------+--------+-------+----------
+ public  | users  | tabla | postgres
+(1 fila)
+
+
+postgres=# \q
+PS C:\Users\Cesar> psql -U postgres
+Contraseña para usuario postgres:
+psql (10.14)
+ADVERTENCIA: El código de página de la consola (437) difiere del código
+            de página de Windows (1252).
+            Los caracteres de 8 bits pueden funcionar incorrectamente.
+            Vea la página de referencia de psql «Notes for Windows users»
+            para obtener más detalles.
+Digite «help» para obtener ayuda.
+
+postgres=# SELECT * FROM postgres;
+ERROR:  no existe la relación «postgres»
+LINEA 1: SELECT * FROM postgres;
+                       ^
+postgres=# SELECT * FROM Test;
+ERROR:  no existe la relación «test»
+LINEA 1: SELECT * FROM Test;
+                       ^
+postgres=# \c Test;
+Ahora está conectado a la base de datos «Test» con el usuario «postgres».
+Test=# CREATE TABLE users (name text, age smallint, birthday date);
+CREATE TABLE
+Test=# \d
+        Listado de relaciones
+ Esquema | Nombre | Tipo  |  Due±o
+---------+--------+-------+----------
+ public  | users  | tabla | postgres
+(1 fila)
+
+
+Test=# INSERT INTO users (name, age, birthday) VALUES ("Cesar", 18, "2002-09-10");
+ERROR:  no existe la columna «Cesar»
+LINEA 1: INSERT INTO users (name, age, birthday) VALUES ("Cesar", 18,...
+                                                         ^
+Test=# insert into users (name, age, birthday) VALUES ("Andrei", 31, "2002-09-10");
+ERROR:  no existe la columna «Andrei»
+LINEA 1: insert into users (name, age, birthday) VALUES ("Andrei", 31...
+                                                         ^
+Test=# insert into users (name, age, birthday) VALUES ('Andrei', 31, '2002-09-10');
+INSERT 0 1
+Test=# \d
+        Listado de relaciones
+ Esquema | Nombre | Tipo  |  Due±o
+---------+--------+-------+----------
+ public  | users  | tabla | postgres
+(1 fila)
+
+
+Test=# SELECT name, age, birthday from users;
+  name  | age |  birthday
+--------+-----+------------
+ Andrei |  31 | 2002-09-10
+(1 fila)
+
+
+Test=# insert into users (name, age, birthday) VALUES ('Cesar', 18, '2002-09-19');
+INSERT 0 1
+Test=# SELECT name, age, birthday from users;
+  name  | age |  birthday
+--------+-----+------------
+ Andrei |  31 | 2002-09-10
+ Cesar  |  18 | 2002-09-19
+(2 filas)
+
+
+Test=# ALTER TABLE users ADD score smallint;
+ALTER TABLE
+Test=# UPDATE users
+Test-# ;
+ERROR:  error de sintaxis en o cerca de «;»
+LINEA 2: ;
+         ^
+Test=# UPDATE users SET score = 50 WHERE name = 'Andrei';
+UPDATE 1
+Test=# UPDATE users SET score = 50 WHERE name = 'Cesar';
+UPDATE 1
+Test=# SELECT * FROM users;
+  name  | age |  birthday  | score
+--------+-----+------------+-------
+ Andrei |  31 | 2002-09-10 |    50
+ Cesar  |  18 | 2002-09-19 |    50
+(2 filas)
+
+
+Test=# UPDATE users SER score = 100 WHERE name = 'Andrei' and name = 'Cesar';
+ERROR:  error de sintaxis en o cerca de «score»
+LINEA 1: UPDATE users SER score = 100 WHERE name = 'Andrei' and name ...
+                          ^
+Test=# UPDATE users SEt score = 100 WHERE name = 'Andrei' and name = 'Cesar';
+UPDATE 0
+Test=# UPDATE users SER score = 100 WHERE name = 'Andrei' or name = 'Cesar';
+ERROR:  error de sintaxis en o cerca de «score»
+LINEA 1: UPDATE users SER score = 100 WHERE name = 'Andrei' or name =...
+                          ^
+Test=# UPDATE users SET score = 100 WHERE name = 'Andrei' or name = 'Cesar';
+UPDATE 2
+Test=# insert into users (name, age, birthday, score) VALUES ('Juan', 31, '2002-09-10', 20);
+INSERT 0 1
+Test=# insert into users (name, age, birthday, score) VALUES ('Carlos', 31, '2002-09-10', 86);
+INSERT 0 1
+Test=# SELECT * FROM users WHERE name LIKE 'A%';
+  name  | age |  birthday  | score
+--------+-----+------------+-------
+ Andrei |  31 | 2002-09-10 |   100
+(1 fila)
+
+
+Test=# SELECT * FROM users WHERE name LIKE '%y';
+ name | age | birthday | score
+------+-----+----------+-------
+(0 filas)
+
+
+Test=# SELECT * FROM users ORDER BY score DESC;
+  name  | age |  birthday  | score
+--------+-----+------------+-------
+ Andrei |  31 | 2002-09-10 |   100
+ Cesar  |  18 | 2002-09-19 |   100
+ Carlos |  31 | 2002-09-10 |    86
+ Juan   |  31 | 2002-09-10 |    20
+(4 filas)
+
+
+Test=# Test=# SELECT * FROM users ORDER BY score DESC;
+ERROR:  error de sintaxis en o cerca de «Test»
+LINEA 1: Test=# SELECT * FROM users ORDER BY score DESC;
+         ^
+Test=# SELECT * FROM users ORDER BY score ASC;
+  name  | age |  birthday  | score
+--------+-----+------------+-------
+ Juan   |  31 | 2002-09-10 |    20
+ Carlos |  31 | 2002-09-10 |    86
+ Andrei |  31 | 2002-09-10 |   100
+ Cesar  |  18 | 2002-09-19 |   100
+(4 filas)
+
+
+Test=# SELECT * FROM users;
+  name  | age |  birthday  | score
+--------+-----+------------+-------
+ Andrei |  31 | 2002-09-10 |   100
+ Cesar  |  18 | 2002-09-19 |   100
+ Juan   |  31 | 2002-09-10 |    20
+ Carlos |  31 | 2002-09-10 |    86
+(4 filas)
+
+
+Test=# SELECT AVG(score) FROM users;
+         avg
+---------------------
+ 76.5000000000000000
+(1 fila)
+
+
+Test=# SELECT SUM(age) FROM users;
+ sum
+-----
+ 111
+(1 fila)
+
+
+Test=# Test=# SELECT * FROM users ORDER BY score DESC;
+ERROR:  error de sintaxis en o cerca de «Test»
+LINEA 1: Test=# SELECT * FROM users ORDER BY score DESC;
+         ^
+Test=# Test=# SELECT * FROM users ORDER BY score DESC;
+ERROR:  error de sintaxis en o cerca de «Test»
+LINEA 1: Test=# SELECT * FROM users ORDER BY score DESC;
+         ^
+Test=# SELECT COUNT(name) FROM users;
+ count
+-------
+     4
+(1 fila)
+
+
+Test=# insert into users (name, age, birthday, score) VALUES ('Sally', 31, '2002-09-10', 86);
+INSERT 0 1
+Test=# \d
+             Listado de relaciones
+ Esquema |    Nombre    |   Tipo    |  Due±o
+---------+--------------+-----------+----------
+ public  | login        | tabla     | postgres
+ public  | login_id_seq | secuencia | postgres
+ public  | users        | tabla     | postgres
+(3 filas)
+
+
+Test=# SELECT * FROM users JOIN login ON users.name = login.name;
+  name  | age |  birthday  | score | id | secret  |  name
+--------+-----+------------+-------+----+---------+--------
+ Andrei |  31 | 2002-09-10 |   100 |  1 | abc     | Andrei
+ Sally  |  31 | 2002-09-10 |    86 |  2 | AHAHAHA | Sally
+(2 filas)
+
+
+Test=# SELECT * FROM users;
+  name  | age |  birthday  | score
+--------+-----+------------+-------
+ Andrei |  31 | 2002-09-10 |   100
+ Cesar  |  18 | 2002-09-19 |   100
+ Juan   |  31 | 2002-09-10 |    20
+ Carlos |  31 | 2002-09-10 |    86
+ Sally  |  31 | 2002-09-10 |    86
+(5 filas)
+
+
+Test=# DELETE FROM users WHERE name='Sally';
+DELETE 1
+Test=# DROP TABLE login;
+DROP TABLE
